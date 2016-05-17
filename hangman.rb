@@ -1,10 +1,6 @@
 require "pry"
 print "Let's play hangman!, a man's life lays on your hands"
-# Split in
-# 6 guesses
-# handle invalid characters
 wordsdb = []
-d =[]
 guesses = []
 
 File.open("/usr/share/dict/words") do |f|
@@ -13,44 +9,19 @@ File.open("/usr/share/dict/words") do |f|
   end
 end
 
-
 board = []
 input = nil
-
-#binding.pry
-
-# # Split input words into arrays
-# until input == "quit" do
-#   input = gets.chomp
-#   unless input.empty?
-#     if input.downcase != "quit"
-#       wordsdb.push(input.split(""))
-#     end
-#   end
-# end
-
-#RANDOM Function
-
-
-#Print word
-# word.each do |letter|
-#   print letter
-# end
-
-# Board creation -------------------------------------
-
-
 # Actual game starts here:
-done = false
-until done do
+gamedone = false
+until gamedone do
   win = false
   attempts = 6
   word = []
   word.clear
   board.clear
   word = wordsdb[rand(0...wordsdb.length)]
-  #binding.pry
 
+  # Board creation -------------------------------------
   word.each do
     board.push "_"
   end
@@ -70,7 +41,6 @@ until done do
       puts "Please type just *ONE* character! Are you trying to cheat?"
     end
 
-    #if guess
 
     i = 0
     word.each do |l|
@@ -80,7 +50,7 @@ until done do
       i += 1
     end
     i = 0
-    unless (guesses.include?(guess) && word.include?(guess)) || guess.length > 1
+    unless guesses.include?(guess) || word.include?(guess) || guess.length > 1
       attempts -= 1
     end
 
@@ -102,7 +72,7 @@ until done do
   puts "Would you like to play again?:y/n"
   replay = gets.chomp
   unless replay.downcase == "y"
-    done = true
+    gamedone = true
   end
 end
 #binding.pry
