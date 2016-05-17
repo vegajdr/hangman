@@ -1,22 +1,33 @@
 require "pry"
-
+print "Let's play hangman!, a man's life lays on your hands"
 # Split in
 # 6 guesses
 # handle invalid characters
-
 wordsdb = []
+d =[]
+guesses = []
+
+File.open("/usr/share/dict/words") do |f|
+  f.each_line do |line|
+    wordsdb.push line.chomp.downcase.split("")
+  end
+end
+
+
 board = []
 input = nil
 
-# Split input words into arrays
-until input == "quit" do
-  input = gets.chomp
-  unless input.empty?
-    if input.downcase != "quit"
-      wordsdb.push(input.split(""))
-    end
-  end
-end
+#binding.pry
+
+# # Split input words into arrays
+# until input == "quit" do
+#   input = gets.chomp
+#   unless input.empty?
+#     if input.downcase != "quit"
+#       wordsdb.push(input.split(""))
+#     end
+#   end
+# end
 
 #RANDOM Function
 word = wordsdb[rand(0...wordsdb.length)]
@@ -38,13 +49,13 @@ puts
 win = false
 attempts = 6
 
-puts "Let's play hangman!, a man's life lays on your hands"
+
 puts "Please type in a letter to guess the word:"
 
 until board == word || attempts == 0#attempts taken do
   guess = gets.chomp
 
-  if board.include?(guess)
+  if guesses.include?(guess)
     puts "You've already guessed that letter, please guess again"
   end
 
@@ -62,7 +73,7 @@ until board == word || attempts == 0#attempts taken do
     i += 1
   end
   i = 0
-  unless word.include?(guess) || guess.length > 1
+  unless guesses.include?(guess) || guess.length > 1
     attempts -= 1
   end
 
@@ -71,6 +82,7 @@ until board == word || attempts == 0#attempts taken do
   end
   puts
   puts "You have #{attempts} attempts left!"
+  guesses.push(guess)
 end
 
 if board == word
