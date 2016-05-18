@@ -1,6 +1,6 @@
 require "pry"
 print "Let's play hangman!, a man's life lays on your hands"
-guesses = []
+guessesdb = []
 
 def database_create
   db = []
@@ -18,18 +18,29 @@ def board_create word
     end
     board
 end
-
 def win? board, word, attempts
   if board == word || attempts == 0
     return true
   end
   return false
 end
-
-def match
+def match board, word, attempts
+  if board == word
+    puts "You have guessed the word! You shall be proclaimed hero among many!"
+  elsif attempts == 0
+    puts "You have killed the poor innocent man, hope you can sleep at night!"
+    puts "All you had to do was guess the word: #{word.join}"
+  end
 end
-
-
+def check_invalid_guess guessesdb, guess
+  if guessesdb.include?(guess)
+    puts "You've already guessed that letter, please guess again"
+  elsif guess.length > 1
+    puts "Please type just *ONE* character! Are you trying to cheat?"
+  end
+end
+def result
+end
 
 wordsdb = database_create
 board = []
@@ -37,7 +48,7 @@ input = nil
 # Actual game starts here:
 gamedone = false
 until gamedone do
-  attempts = 2
+  attempts = 6
   word = []
   board.clear
   word = wordsdb.sample
@@ -49,15 +60,11 @@ until gamedone do
 
   until win?(board, word, attempts) #== word || attempts == 0#attempts taken do
     guess = gets.chomp
+    puts word.join
 
-    if guesses.include?(guess)
-      puts "You've already guessed that letter, please guess again"
-    end
+    check_invalid_guess guessesdb, guess
 
-    if guess.length > 1
-      puts "Please type just *ONE* character! Are you trying to cheat?"
-    end
-
+#------- Potential method
     i = 0
     word.each do |l|
       if guess == l
@@ -66,25 +73,20 @@ until gamedone do
       i += 1
     end
     i = 0
-    unless guesses.include?(guess) || word.include?(guess) || guess.length > 1
+    unless guessesdb.include?(guess) || word.include?(guess) || guess.length > 1
       attempts -= 1
     end
-
+#-------------------------
 
     board.each do |letter|
       print letter
     end
     puts
     puts "You have #{attempts} attempts left!"
-    guesses.push(guess)
+    guessesdb.push(guess)
   end
-#binding.pry
-  if true
-    puts "You have guessed the word! You shall be proclaimed hero among many!"
-  elsif attempts == 0
-    puts "You have killed the poor innocent man, hope you can sleep at night!"
-    puts "All you had to do was guess the word: #{word.join}"
-  end
+
+  match board, word, attempts
 
   puts "Would you like to play again?:y/n"
   replay = gets.chomp
