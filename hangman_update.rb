@@ -1,37 +1,53 @@
 require "pry"
 print "Let's play hangman!, a man's life lays on your hands"
-wordsdb = []
 guesses = []
 
-File.open("/usr/share/dict/words") do |f|
-  f.each_line do |line|
-    wordsdb.push line.chomp.downcase.split("")
+def database_create
+  db = []
+  File.open("/usr/share/dict/words") do |f|
+    f.each_line do |line|
+      db.push line.chomp.downcase.split("")
+    end
   end
+  db
 end
-#binding.pry
+def board_create word
+  board = []
+    word.each do
+      board.push "_"
+    end
+    board
+end
+
+def win? board, word, attempts
+  if board == word || attempts == 0
+    return true
+  end
+  return false
+end
+
+def match
+end
+
+
+
+wordsdb = database_create
 board = []
 input = nil
 # Actual game starts here:
 gamedone = false
 until gamedone do
-  #win = false
-  attempts = 6
+  attempts = 2
   word = []
-  #word.clear
   board.clear
-  word = wordsdb[rand(0...wordsdb.length)]
-  #wordsdb.sample
-#binding.pry
-  # Board creation -------------------------------------
-  word.each do
-    board.push "_"
-  end
-  #----------------------------
+  word = wordsdb.sample
+  board = board_create word
+
   puts
 
   puts "Please type in a letter to guess the word:"
 
-  until board == word || attempts == 0#attempts taken do
+  until win?(board, word, attempts) #== word || attempts == 0#attempts taken do
     guess = gets.chomp
 
     if guesses.include?(guess)
@@ -41,7 +57,6 @@ until gamedone do
     if guess.length > 1
       puts "Please type just *ONE* character! Are you trying to cheat?"
     end
-
 
     i = 0
     word.each do |l|
@@ -55,6 +70,7 @@ until gamedone do
       attempts -= 1
     end
 
+
     board.each do |letter|
       print letter
     end
@@ -62,8 +78,8 @@ until gamedone do
     puts "You have #{attempts} attempts left!"
     guesses.push(guess)
   end
-
-  if board == word
+#binding.pry
+  if true
     puts "You have guessed the word! You shall be proclaimed hero among many!"
   elsif attempts == 0
     puts "You have killed the poor innocent man, hope you can sleep at night!"
@@ -75,5 +91,6 @@ until gamedone do
   unless replay.downcase == "y"
     gamedone = true
   end
+
 end
 #binding.pry
