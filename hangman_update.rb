@@ -32,12 +32,14 @@ def match board, word, attempts, solution
   end
 end
 def check_invalid_guess guessesdb, guess
-  if guessesdb.include?(guess) && guess != ""
+  if guessesdb.include?(guess) && guess != "" && guess != ":solve"
     puts "You've already guessed that letter, please guess again"
-  elsif guess.length > 1
+  elsif guess.length > 1 && guess != ":solve"
     puts "Please type just *ONE* character! Are you trying to cheat?"
   elsif guess == ""
     puts "You didn't type anything, please choose a letter"
+  elsif guess == ":solve"
+    puts "That's a bold move!"
   end
 end
 def correct_guess word, guess, board
@@ -94,7 +96,7 @@ until done do
   puts "(*NOTE: Type ':solve' to guess full word:)"
   until win?(board, word, attempts, solution) #== word || attempts == 0#attempts taken do
     guess = gets.chomp
-    check_invalid_guess guessesdb, guess
+
     solution = full_solve guess, word
     p solution
     # unless full_solve guess == nil
@@ -102,7 +104,7 @@ until done do
     # end
     #guess = full_solve guess
     puts word.join
-
+    check_invalid_guess guessesdb, guess
     correct_guess word, guess, board
     attempts -= 1 if attempts_count guessesdb, guess, word
     display board
