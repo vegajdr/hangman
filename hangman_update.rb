@@ -17,14 +17,14 @@ def board_create word
     end
     board
 end
-def win? board, word, attempts
-  if board == word || attempts == 0
+def win? board, word, attempts, solution
+  if board == word || attempts == 0 || solution == true
     return true
   end
   return false
 end
-def match board, word, attempts
-  if board == word
+def match board, word, attempts, solution
+  if board == word || solution
     puts "You have guessed the word! You shall be proclaimed hero among many!"
   elsif attempts == 0
     puts "You have killed the poor innocent man, hope you can sleep at night!"
@@ -67,9 +67,20 @@ def display board
     print letter
   end
 end
+def full_solve guess, board
+  answer = nil
+  if guess == ":solve"
+    answer = gets.chomp.split("")
+    if answer == board
+      return true
+    end#end the game as win
+
+  end
+  false
+end
+
 wordsdb = database_create
 board = []
-input = nil
 done = nil# Actual game starts here:
 until done do
   attempts = 6
@@ -78,18 +89,28 @@ until done do
   guessesdb.clear
   word = wordsdb.sample
   board = board_create word
-  puts "\nPlease type in a letter to guess the word:"
-  until win?(board, word, attempts) #== word || attempts == 0#attempts taken do
+  solution = false
+  puts "\nPlease type in a letter to guess the word"
+  puts "(*NOTE: Type ':solve' to guess full word:)"
+  until win?(board, word, attempts, solution) #== word || attempts == 0#attempts taken do
     guess = gets.chomp
-    puts word.join
     check_invalid_guess guessesdb, guess
+    solution = full_solve guess, word
+    p solution
+    # unless full_solve guess == nil
+    #   guess = full_solve guess
+    # end
+    #guess = full_solve guess
+    puts word.join
+
     correct_guess word, guess, board
     attempts -= 1 if attempts_count guessesdb, guess, word
     display board
     puts "\nYou have #{attempts} attempts left!"
     guessesdb.push(guess)
+    match board, word, attempts, solution
   end
-  match board, word, attempts
+  # match board, word, attempts
   puts "Would you like to play again?:y/n"
   confirm = gets.chomp
   done = replay(confirm)
